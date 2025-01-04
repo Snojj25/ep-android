@@ -11,7 +11,6 @@ data class ApiResponse(
 
 data class ApiData(
     val products: List<Product>,
-    val productImages: List<ProductImage>
 )
 
 data class Product(
@@ -22,14 +21,32 @@ data class Product(
     val stock: Int,
     val is_active: Int,
     val created_at: String,
-    val updated_at: String
+    val updated_at: String,
+    val imageBase64: String
 )
 
-data class ProductImage(
-    @SerializedName("id") val id: Int,
-    @SerializedName("productId") val productId: Int,
-    @SerializedName("filePath") val filePath: String,
-    @SerializedName("isPrimary") val isPrimary: Boolean
+data class ApiResponseAuth(
+    val status: String,
+    val data: ApiDataAuth
+)
+
+data class ApiDataAuth(
+    val authenticated: Boolean,
+    val user: User?
+)
+
+data class User(
+    val id: Int,
+    val first_name: String,
+    val last_name: String?,
+    val email: Float,
+    val role: Int,
+    val address: Int,
+    val postal_code: String,
+    val city: String,
+    val is_active: String,
+    val created_at: String,
+    val updated_at: String
 )
 
 
@@ -38,4 +55,7 @@ data class ProductImage(
 interface ApiService {
     @GET("index.php")
     suspend fun getProducts(@Query("controller") controller: String): ApiResponse
+
+    @GET("index.php")
+    suspend fun authenticate(@Query("controller") controller: String,@Query("email") email: String, @Query("password") password: String ): ApiResponseAuth
 }

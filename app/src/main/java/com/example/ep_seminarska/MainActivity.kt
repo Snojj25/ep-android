@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
 
     private fun setupRetrofit() {
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:8000/")  // Replace with your computer's IP
+            .baseUrl("http://10.0.2.2:8000")  // Replace with your computer's IP
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 

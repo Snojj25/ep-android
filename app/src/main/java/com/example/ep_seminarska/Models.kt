@@ -1,7 +1,11 @@
 package com.example.ep_seminarska
 
 import com.google.gson.annotations.SerializedName
+import okhttp3.RequestBody
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Headers
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 data class ApiResponse(
@@ -27,10 +31,11 @@ data class Product(
 
 
 interface ApiService {
-    @GET("index.php")
-    suspend fun getProducts(@Query("controller") controller: String): ApiResponse
+    @GET("index.php?controller=api")
+    suspend fun getProducts(): ApiResponse
 
 }
+//@Query("controller") controller: String
 
 
 data  class ApiResponseAuth(
@@ -59,8 +64,8 @@ data class User(
 
 // Interface defining the Auth endpoints
 interface AuthService {
-    @GET("index.php")
-    suspend fun authenticate(@Query("controller") controller: String, @Query("action") action: String, @Query("email") email: String, @Query("password") password: String ): ApiResponseAuth
+    @GET("index.php?controller=api&action=authenticate")
+    suspend fun authenticate(@Query("email") email: String, @Query("password") password: String ): ApiResponseAuth
 }
 
 
@@ -99,17 +104,8 @@ data class OrderItem(
 
 
 
-// Interface defining the OrderHistory endpoints
-interface OrdersService {
-    @GET("index.php")
-    suspend fun getOrderHistory(@Query("controller") controller: String, @Query("action") action: String, @Query("userId") userId: String ): ApiResponseOrders
-
-    
-}
-
-
 // Request related data classes
-data class CartItem(
+data class APICartItem(
     val product_id: Int,
     val name: String,
     val price: Float,
@@ -123,7 +119,7 @@ data class PlaceOrderRequest(
     val city: String,
     val phone: String,
     val notes: String,
-    val cart_items: List<CartItem>
+    val cart_items: List<APICartItem>
 )
 
 // Response related data classes
@@ -133,8 +129,24 @@ data class PlaceOrderResponse(
 )
 
 data class PlaceOrderData(
-    val order: Order,
-    val message: String
+    val order_id: String
 )
+
+
+// Interface defining the OrderHistory endpoints
+interface OrdersService {
+    @GET("index.php?controller=api&action=getOrderHistory")
+    suspend fun getOrderHistory(@Query("userId") userId: String ): ApiResponseOrders
+
+    @POST("index.php?controller=api&action=placeOrder")
+    @Headers("Content-Type: application/json")
+    suspend fun placeOrder(
+        @Body requestBody: RequestBody
+    ): PlaceOrderResponse
+}
+
+
+
+
 
 

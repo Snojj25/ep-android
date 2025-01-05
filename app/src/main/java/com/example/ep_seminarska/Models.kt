@@ -1,8 +1,10 @@
 package com.example.ep_seminarska
 
 import com.google.gson.annotations.SerializedName
+import okhttp3.RequestBody
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Query
 
@@ -29,10 +31,11 @@ data class Product(
 
 
 interface ApiService {
-    @GET("index.php")
-    suspend fun getProducts(@Query("controller") controller: String): ApiResponse
+    @GET("index.php?controller=api")
+    suspend fun getProducts(): ApiResponse
 
 }
+//@Query("controller") controller: String
 
 
 data  class ApiResponseAuth(
@@ -61,8 +64,8 @@ data class User(
 
 // Interface defining the Auth endpoints
 interface AuthService {
-    @GET("index.php")
-    suspend fun authenticate(@Query("controller") controller: String, @Query("action") action: String, @Query("email") email: String, @Query("password") password: String ): ApiResponseAuth
+    @GET("index.php?controller=api&action=authenticate")
+    suspend fun authenticate(@Query("email") email: String, @Query("password") password: String ): ApiResponseAuth
 }
 
 
@@ -126,22 +129,23 @@ data class PlaceOrderResponse(
 )
 
 data class PlaceOrderData(
-    val order_id: Int
+    val order_id: String
 )
 
 
 // Interface defining the OrderHistory endpoints
 interface OrdersService {
-    @GET("index.php")
-    suspend fun getOrderHistory(@Query("controller") controller: String, @Query("action") action: String, @Query("userId") userId: String ): ApiResponseOrders
+    @GET("index.php?controller=api&action=getOrderHistory")
+    suspend fun getOrderHistory(@Query("userId") userId: String ): ApiResponseOrders
 
-    @POST("index.php")
+    @POST("index.php?controller=api&action=placeOrder")
+    @Headers("Content-Type: application/json")
     suspend fun placeOrder(
-        @Query("controller") controller: String,
-        @Query("action") action: String,
-        @Body orderRequest: PlaceOrderRequest
+        @Body requestBody: RequestBody
     ): PlaceOrderResponse
 }
+
+
 
 
 

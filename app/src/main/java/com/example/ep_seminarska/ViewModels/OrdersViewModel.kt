@@ -1,14 +1,18 @@
 package com.example.ep_seminarska.ViewModels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ep_seminarska.APICartItem
 import com.example.ep_seminarska.Order
 import com.example.ep_seminarska.OrdersService
 import com.example.ep_seminarska.PlaceOrderRequest
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -17,7 +21,7 @@ data class OrderManagementState(
     val orders: List<Order> = emptyList(),
     val error: String? = null,
     val orderPlacementSuccess: Boolean = false,
-    val lastPlacedOrderId: Int? = null
+    val lastPlacedOrderId: String? = null
 )
 
 class OrderManagementViewModel : ViewModel() {
@@ -39,7 +43,7 @@ class OrderManagementViewModel : ViewModel() {
         viewModelScope.launch {
             _orderState.value = _orderState.value.copy(isLoading = true, error = null)
             try {
-                val response = ordersService.getOrderHistory("api", "getOrderHistory", userId)
+                val response = ordersService.getOrderHistory(userId)
                 if (response.status == "success") {
                     _orderState.value = _orderState.value.copy(
                         isLoading = false,
@@ -70,6 +74,9 @@ class OrderManagementViewModel : ViewModel() {
         notes: String,
         cartItems: List<APICartItem>
     ) {
+
+        Log.i("HERE IN PLACE ORDER: ", userId.toString())
+
         viewModelScope.launch {
             _orderState.value = _orderState.value.copy(
                 isLoading = true,
@@ -88,9 +95,16 @@ class OrderManagementViewModel : ViewModel() {
                     cart_items = cartItems
                 )
 
-                val response = ordersService.placeOrder("api", "placeOrder", orderRequest)
+                val jsonBody = Gson().toJson(orderRequest)
+                val requestBody = jsonBody.toRequestBody("application/json".toMediaTypeOrNull())
+
+
+                Log.i("BEFORE PLACE ORDER: ", orderRequest.toString())
+                val response = ordersService.placeOrder(requestBody)
+                Log.i("PLACE ORDER RES: ", response.toString())
 
                 if (response.status == "success") {
+
                     _orderState.value = _orderState.value.copy(
                         isLoading = false,
                         error = null,

@@ -35,7 +35,7 @@ class ProductViewModel : ViewModel() {
     private fun fetchProducts() {
         viewModelScope.launch {
             try {
-                val response = apiService.getProducts("api")
+                val response = apiService.getProducts()
                 if (response.status == "success") {
                     _productsState.value = ProductsState(
                         products = response.data.products,

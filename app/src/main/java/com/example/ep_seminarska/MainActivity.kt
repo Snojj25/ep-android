@@ -85,13 +85,12 @@ class MainActivity : ComponentActivity() {
 fun AppNavigation(products: List<Product>) {
     val navController = rememberNavController()
     val authViewModel = remember { AuthViewModel() }
-    //val ordersViewModel = remember { OrderManagementViewModel() }
-    //val cartViewModel = remember { CartViewModel() }
+    val ordersViewModel = remember { OrderManagementViewModel() }
+    val cartViewModel = remember { CartViewModel() }
 
-    NavHost(navController = navController, startDestination = "login") {
+    NavHost(navController = navController, startDestination = "products") {
         composable("products") {
-            //HomeScreen(navController, products)
-            ProductListScreen(navController, products, authViewModel)
+            ProductListScreen(navController, products, authViewModel, cartViewModel)
         }
         composable("productDetail/{productId}") {backStackEntry ->
             val productId = backStackEntry.arguments?.getString("productId")?.toIntOrNull()
@@ -106,7 +105,7 @@ fun AppNavigation(products: List<Product>) {
         composable("profile") {
             ProfileScreen(authViewModel, navController)
         }
-       /* composable("orders") {
+       composable("orders") {
             OrderHistoryScreen(
                 ordersViewModel = ordersViewModel,
                 authViewModel = authViewModel,
@@ -120,6 +119,6 @@ fun AppNavigation(products: List<Product>) {
                 orderViewModel = ordersViewModel,
                 authViewModel = authViewModel
             )
-        }*/
+        }
     }
 }

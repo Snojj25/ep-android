@@ -42,9 +42,14 @@ import com.example.ep_seminarska.ViewModels.CartViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductListScreen(navController: NavController, products: List<Product>, viewModel: AuthViewModel ) {
+fun ProductListScreen(
+    navController: NavController,
+    products: List<Product>,
+    viewModel: AuthViewModel,
+    cartViewModel: CartViewModel,
+) {
     val authState by viewModel.authState.collectAsState()
-    //val cartState by cartViewModel.cartState.collectAsState()
+    val cartState by cartViewModel.cartState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -53,7 +58,22 @@ fun ProductListScreen(navController: NavController, products: List<Product>, vie
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 ),
-                        actions = {
+                actions = {
+
+                    IconButton(onClick = { navController.navigate("cart") }) {
+                        BadgedBox(
+                            badge = {
+                                if (cartState.items.isNotEmpty()) {
+                                    Badge { Text(cartState.items.size.toString()) }
+                                }
+                            }
+                        ) {
+                            Icon(
+                                Icons.Default.ShoppingCart,
+                                contentDescription = "Cart"
+                            )
+                        }
+                    }
                     IconButton(
                         onClick = {
                             if (authState.user != null) {
@@ -80,20 +100,7 @@ fun ProductListScreen(navController: NavController, products: List<Product>, vie
                         )
 
                     }
-                   /* IconButton(onClick = { navController.navigate("cart") }) {
-                        BadgedBox(
-                            badge = {
-                                if (cartState.items.isNotEmpty()) {
-                                    Badge { Text(cartState.items.size.toString()) }
-                                }
-                            }
-                        ) {
-                            Icon(
-                                Icons.Default.ShoppingCart,
-                                contentDescription = "Cart"
-                            )
-                        }
-                    }*/
+
                 }
 
             )
@@ -109,8 +116,7 @@ fun ProductListScreen(navController: NavController, products: List<Product>, vie
             items(products) { product ->
                 ProductCard(
                     product = product,
-                    onAddToCart = {},
-                    //onAddToCart = { cartViewModel.addToCart(product) },
+                    onAddToCart = { cartViewModel.addToCart(product) },
                     onClick = { navController.navigate("productDetail/${product.id}") }
                 )
             }
@@ -119,13 +125,11 @@ fun ProductListScreen(navController: NavController, products: List<Product>, vie
 }
 
 
-
-
 @Composable
 fun ProductCard(
     product: Product,
     onAddToCart: () -> Unit,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Card(
         modifier = Modifier

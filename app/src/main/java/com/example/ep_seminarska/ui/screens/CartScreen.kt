@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
@@ -83,6 +84,7 @@ fun CartScreen(
             OrderConfirmationDialog(
                 onDismiss = {
                     showConfirmation = false
+                    orderViewModel.resetOrderPlacement()
                     navController.navigate("orders") {
                         popUpTo("cart") { inclusive = true }
                     }
@@ -201,7 +203,7 @@ fun CartItemRow(
             }
             Text(item.quantity.toString())
             IconButton(onClick = { onUpdateQuantity(item.quantity + 1) }) {
-                Icon(Icons.Default.Add, "Increase")
+                Icon(Icons.Default.KeyboardArrowUp, "Increase")
             }
             IconButton(onClick = onRemove) {
                 Icon(Icons.Default.Delete, "Remove")
@@ -295,7 +297,7 @@ fun OrderSummary(
                 .padding(top = 16.dp),
             enabled = isEnabled
         ) {
-            Text("Place Order")
+            Text( if (isEnabled)  "Place Order" else "Must be Logged in")
         }
     }
 }
@@ -330,7 +332,7 @@ fun OrderConfirmationDialog(onDismiss: () -> Unit) {
         text = { Text("Your order has been placed successfully. You can view your order details in the Orders section.") },
         confirmButton = {
             Button(onClick = onDismiss) {
-                Text("View Orders")
+                Text("Close")
             }
         }
     )

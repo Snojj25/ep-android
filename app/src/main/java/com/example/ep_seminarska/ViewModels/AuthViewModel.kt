@@ -37,7 +37,7 @@ class AuthViewModel : ViewModel() {
         viewModelScope.launch {
             _authState.value = _authState.value.copy(isLoading = true, error = null)
             try {
-                val response = authService.authenticate("api", "authenticate", email, password)
+                val response = authService.authenticate( email, password)
                 if (response.status == "success" && response.data.authenticated && response.data.user?.is_active == true) {
                     _authState.value = _authState.value.copy(
                         isLoading = false,

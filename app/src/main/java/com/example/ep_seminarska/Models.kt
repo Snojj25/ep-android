@@ -1,7 +1,9 @@
 package com.example.ep_seminarska
 
 import com.google.gson.annotations.SerializedName
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 data class ApiResponse(
@@ -99,17 +101,8 @@ data class OrderItem(
 
 
 
-// Interface defining the OrderHistory endpoints
-interface OrdersService {
-    @GET("index.php")
-    suspend fun getOrderHistory(@Query("controller") controller: String, @Query("action") action: String, @Query("userId") userId: String ): ApiResponseOrders
-
-    
-}
-
-
 // Request related data classes
-data class CartItem(
+data class APICartItem(
     val product_id: Int,
     val name: String,
     val price: Float,
@@ -123,7 +116,7 @@ data class PlaceOrderRequest(
     val city: String,
     val phone: String,
     val notes: String,
-    val cart_items: List<CartItem>
+    val cart_items: List<APICartItem>
 )
 
 // Response related data classes
@@ -133,8 +126,23 @@ data class PlaceOrderResponse(
 )
 
 data class PlaceOrderData(
-    val order: Order,
-    val message: String
+    val order_id: Int
 )
+
+
+// Interface defining the OrderHistory endpoints
+interface OrdersService {
+    @GET("index.php")
+    suspend fun getOrderHistory(@Query("controller") controller: String, @Query("action") action: String, @Query("userId") userId: String ): ApiResponseOrders
+
+    @POST("index.php")
+    suspend fun placeOrder(
+        @Query("controller") controller: String,
+        @Query("action") action: String,
+        @Body orderRequest: PlaceOrderRequest
+    ): PlaceOrderResponse
+}
+
+
 
 

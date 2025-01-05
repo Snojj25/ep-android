@@ -16,17 +16,17 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.ep_seminarska.Order
 import com.example.ep_seminarska.OrderItem
-import com.example.ep_seminarska.ViewModels.OrdersViewModel
+import com.example.ep_seminarska.ViewModels.OrderManagementViewModel
 import com.example.ep_seminarska.ViewModels.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OrderHistoryScreen(
-    ordersViewModel: OrdersViewModel,
+    ordersViewModel: OrderManagementViewModel,
     authViewModel: AuthViewModel,
     navController: NavController
 ) {
-    val ordersState by ordersViewModel.ordersState.collectAsState()
+    val ordersState by ordersViewModel.orderState.collectAsState()
     val authState by authViewModel.authState.collectAsState()
 
     LaunchedEffect(authState.user) {

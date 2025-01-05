@@ -23,10 +23,12 @@ import com.example.ep_seminarska.ApiService
 import com.example.ep_seminarska.ViewModels.AuthViewModel
 import com.example.ep_seminarska.ui.screens.LoginScreen
 import com.example.ep_seminarska.Product
-import com.example.ep_seminarska.ViewModels.OrdersViewModel
+import com.example.ep_seminarska.ViewModels.CartViewModel
+import com.example.ep_seminarska.ViewModels.OrderManagementViewModel
 import com.example.ep_seminarska.ui.screens.ProductDetailScreen
 import com.example.ep_seminarska.ui.screens.ProductListScreen
 import com.example.ep_seminarska.ViewModels.ProductViewModel
+import com.example.ep_seminarska.ui.screens.CartScreen
 import com.example.ep_seminarska.ui.screens.OrderHistoryScreen
 import com.example.ep_seminarska.ui.screens.ProfileScreen
 
@@ -83,9 +85,10 @@ class MainActivity : ComponentActivity() {
 fun AppNavigation(products: List<Product>) {
     val navController = rememberNavController()
     val authViewModel = remember { AuthViewModel() }
-    val ordersViewModel = remember { OrdersViewModel() }
+    //val ordersViewModel = remember { OrderManagementViewModel() }
+    //val cartViewModel = remember { CartViewModel() }
 
-    NavHost(navController = navController, startDestination = "products") {
+    NavHost(navController = navController, startDestination = "login") {
         composable("products") {
             //HomeScreen(navController, products)
             ProductListScreen(navController, products, authViewModel)
@@ -103,12 +106,20 @@ fun AppNavigation(products: List<Product>) {
         composable("profile") {
             ProfileScreen(authViewModel, navController)
         }
-        composable("orders") {
+       /* composable("orders") {
             OrderHistoryScreen(
                 ordersViewModel = ordersViewModel,
                 authViewModel = authViewModel,
                 navController = navController
             )
         }
+        composable("cart") {
+            CartScreen(
+                navController = navController,
+                cartViewModel = cartViewModel,
+                orderViewModel = ordersViewModel,
+                authViewModel = authViewModel
+            )
+        }*/
     }
 }

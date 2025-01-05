@@ -15,6 +15,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,11 +38,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.ep_seminarska.Product
 import com.example.ep_seminarska.ViewModels.AuthViewModel
+import com.example.ep_seminarska.ViewModels.CartViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductListScreen(navController: NavController, products: List<Product>, viewModel: AuthViewModel) {
+fun ProductListScreen(navController: NavController, products: List<Product>, viewModel: AuthViewModel ) {
     val authState by viewModel.authState.collectAsState()
+    //val cartState by cartViewModel.cartState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -48,7 +54,6 @@ fun ProductListScreen(navController: NavController, products: List<Product>, vie
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 ),
                         actions = {
-                    val authState by viewModel.authState.collectAsState()
                     IconButton(
                         onClick = {
                             if (authState.user != null) {
@@ -75,6 +80,20 @@ fun ProductListScreen(navController: NavController, products: List<Product>, vie
                         )
 
                     }
+                   /* IconButton(onClick = { navController.navigate("cart") }) {
+                        BadgedBox(
+                            badge = {
+                                if (cartState.items.isNotEmpty()) {
+                                    Badge { Text(cartState.items.size.toString()) }
+                                }
+                            }
+                        ) {
+                            Icon(
+                                Icons.Default.ShoppingCart,
+                                contentDescription = "Cart"
+                            )
+                        }
+                    }*/
                 }
 
             )
@@ -88,9 +107,12 @@ fun ProductListScreen(navController: NavController, products: List<Product>, vie
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(products) { product ->
-                ProductCard(product) {
-                    navController.navigate("productDetail/${product.id}")
-                }
+                ProductCard(
+                    product = product,
+                    onAddToCart = {},
+                    //onAddToCart = { cartViewModel.addToCart(product) },
+                    onClick = { navController.navigate("productDetail/${product.id}") }
+                )
             }
         }
     }
@@ -100,7 +122,11 @@ fun ProductListScreen(navController: NavController, products: List<Product>, vie
 
 
 @Composable
-fun ProductCard(product: Product, onClick: () -> Unit) {
+fun ProductCard(
+    product: Product,
+    onAddToCart: () -> Unit,
+    onClick: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -131,6 +157,15 @@ fun ProductCard(product: Product, onClick: () -> Unit) {
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary
             )
+
+            Button(
+                onClick = onAddToCart,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Add to Cart")
+            }
         }
     }
 }
+
+

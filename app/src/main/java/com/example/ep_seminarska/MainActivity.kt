@@ -27,12 +27,22 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 import retrofit2.http.Url
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ep_seminarska.ApiService
+import com.example.ep_seminarska.AuthViewModel
+import com.example.ep_seminarska.LoginScreen
 import com.example.ep_seminarska.Product
 import com.example.ep_seminarska.ProductDetailScreen
 import com.example.ep_seminarska.ProductListScreen
-
-
+import com.example.ep_seminarska.ProductViewModel
+import com.example.ep_seminarska.ProfileScreen
+import kotlinx.coroutines.Delay
 
 
 class MainActivity : ComponentActivity() {
@@ -44,58 +54,54 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setupRetrofit()
-
-        fetchProducts()
-
         setContent {
             MaterialTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    AppNavigation(products)
+                    val productViewModel = viewModel<ProductViewModel>()
+                    val productsState by productViewModel.productsState.collectAsState()
+
+                    if (productsState.isLoading) {
+                        // Show loading indicator
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    } else if (productsState.error != null) {
+                        // Show error state
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(productsState.error!!)
+                        }
+                    } else {
+                        // Show content
+                        AppNavigation(productsState.products)
+                    }
                 }
             }
         }
 
     }
 
-    private fun setupRetrofit() {
-        val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:8000")  // Replace with your computer's IP
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
 
-
-        apiService = retrofit.create(ApiService::class.java)
-    }
-
-    private fun fetchProducts() {
-        lifecycleScope.launch {
-            try {
-                val response = apiService.getProducts("api")
-                if (response.status == "success") {
-                    products = response.data.products
-                } else {
-                    Log.e(tag, "Error: API returned failure status")
-                }
-            } catch (e: Exception) {
-                Log.e(tag, "Error fetching data", e)
-            }
-        }
-    }
 
 }
 
 @Composable
 fun AppNavigation(products: List<Product>) {
     val navController = rememberNavController()
+    val viewModel = remember { AuthViewModel() }
 
     NavHost(navController = navController, startDestination = "products") {
         composable("products") {
             //HomeScreen(navController, products)
-            ProductListScreen(navController, products)
+            ProductListScreen(navController, products, viewModel)
         }
         composable("productDetail/{productId}") {backStackEntry ->
             val productId = backStackEntry.arguments?.getString("productId")?.toIntOrNull()
@@ -104,16 +110,11 @@ fun AppNavigation(products: List<Product>) {
                ProductDetailScreen(navController, product)
             }
         }
-    }
-}
-
-
-@Composable
-fun DetailScreen(id: String, navController: NavController) {
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text("Detail Screen for item $id")
-        Button(onClick = { navController.navigateUp() }) {
-            Text("Go Back")
+        composable("login") {
+            LoginScreen(viewModel, navController)
+        }
+        composable("profile") {
+            ProfileScreen(viewModel, navController)
         }
     }
 }

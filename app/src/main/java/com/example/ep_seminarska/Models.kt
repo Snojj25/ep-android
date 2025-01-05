@@ -25,7 +25,15 @@ data class Product(
     val imageBase64: String
 )
 
-data class ApiResponseAuth(
+
+interface ApiService {
+    @GET("index.php")
+    suspend fun getProducts(@Query("controller") controller: String): ApiResponse
+
+}
+
+
+data  class ApiResponseAuth(
     val status: String,
     val data: ApiDataAuth
 )
@@ -39,23 +47,18 @@ data class User(
     val id: Int,
     val first_name: String,
     val last_name: String?,
-    val email: Float,
-    val role: Int,
-    val address: Int,
+    val email: String,
+    val role: String,
+    val address: String,
     val postal_code: String,
     val city: String,
-    val is_active: String,
+    val is_active: Boolean,
     val created_at: String,
     val updated_at: String
 )
 
-
-
-// Interface defining the API endpoints
-interface ApiService {
+// Interface defining the Auth endpoints
+interface AuthService {
     @GET("index.php")
-    suspend fun getProducts(@Query("controller") controller: String): ApiResponse
-
-    @GET("index.php")
-    suspend fun authenticate(@Query("controller") controller: String,@Query("email") email: String, @Query("password") password: String ): ApiResponseAuth
+    suspend fun authenticate(@Query("controller") controller: String, @Query("action") action: String, @Query("email") email: String, @Query("password") password: String ): ApiResponseAuth
 }

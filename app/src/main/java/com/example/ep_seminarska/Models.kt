@@ -62,3 +62,79 @@ interface AuthService {
     @GET("index.php")
     suspend fun authenticate(@Query("controller") controller: String, @Query("action") action: String, @Query("email") email: String, @Query("password") password: String ): ApiResponseAuth
 }
+
+
+data  class ApiResponseOrders(
+    val status: String,
+    val data: ApiDataOrders
+)
+
+data class ApiDataOrders(
+    val orders: List<Order>
+)
+
+data class Order(
+    val id: Int,
+    val user_id: Int,
+    val status: String?,
+    val total_amount: String,
+    val created_at: String,
+    val updated_at: String,
+    val shipping_address: String,
+    val postal_code: String,
+    val city: Boolean,
+    val phone: String,
+    val notes: String,
+    val items: List<OrderItem>
+)
+
+data class OrderItem(
+    val id: Int,
+    val order_id: Int,
+    val product_id: Int,
+    val quantity: Int,
+    val price: String,
+    val product_name: String,
+)
+
+
+
+// Interface defining the OrderHistory endpoints
+interface OrdersService {
+    @GET("index.php")
+    suspend fun getOrderHistory(@Query("controller") controller: String, @Query("action") action: String, @Query("userId") userId: String ): ApiResponseOrders
+
+    
+}
+
+
+// Request related data classes
+data class CartItem(
+    val product_id: Int,
+    val name: String,
+    val price: Float,
+    val quantity: Int
+)
+
+data class PlaceOrderRequest(
+    val user_id: Int,
+    val shipping_address: String,
+    val postal_code: String,
+    val city: String,
+    val phone: String,
+    val notes: String,
+    val cart_items: List<CartItem>
+)
+
+// Response related data classes
+data class PlaceOrderResponse(
+    val status: String,
+    val data: PlaceOrderData
+)
+
+data class PlaceOrderData(
+    val order: Order,
+    val message: String
+)
+
+

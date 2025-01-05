@@ -1,10 +1,9 @@
-package com.example.ep_seminarska
+package com.example.ep_seminarska.ui.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,11 +13,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,10 +32,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.ep_seminarska.Product
+import com.example.ep_seminarska.ViewModels.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductListScreen(navController: NavController, products: List<Product>, viewModel: AuthViewModel ) {
+fun ProductListScreen(navController: NavController, products: List<Product>, viewModel: AuthViewModel) {
     val authState by viewModel.authState.collectAsState()
 
     Scaffold(
@@ -76,11 +74,6 @@ fun ProductListScreen(navController: NavController, products: List<Product>, vie
                                 .size(16.dp),
                         )
 
-                        // Option 2: Using Text
-                        // Text(
-                        //     text = if (authState.user != null) "Profile" else "Login",
-                        //     modifier = Modifier.padding(horizontal = 16.dp)
-                        // )
                     }
                 }
 

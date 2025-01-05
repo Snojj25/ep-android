@@ -1,31 +1,16 @@
 package ep.seminarska
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.gson.annotations.SerializedName
-import kotlinx.coroutines.launch
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
-import retrofit2.http.Query
-import retrofit2.http.Url
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.CircularProgressIndicator
@@ -35,14 +20,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ep_seminarska.ApiService
-import com.example.ep_seminarska.AuthViewModel
-import com.example.ep_seminarska.LoginScreen
+import com.example.ep_seminarska.ViewModels.AuthViewModel
+import com.example.ep_seminarska.ui.screens.LoginScreen
 import com.example.ep_seminarska.Product
-import com.example.ep_seminarska.ProductDetailScreen
-import com.example.ep_seminarska.ProductListScreen
-import com.example.ep_seminarska.ProductViewModel
-import com.example.ep_seminarska.ProfileScreen
-import kotlinx.coroutines.Delay
+import com.example.ep_seminarska.ViewModels.OrdersViewModel
+import com.example.ep_seminarska.ui.screens.ProductDetailScreen
+import com.example.ep_seminarska.ui.screens.ProductListScreen
+import com.example.ep_seminarska.ViewModels.ProductViewModel
+import com.example.ep_seminarska.ui.screens.OrderHistoryScreen
+import com.example.ep_seminarska.ui.screens.ProfileScreen
 
 
 class MainActivity : ComponentActivity() {
@@ -96,12 +82,13 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppNavigation(products: List<Product>) {
     val navController = rememberNavController()
-    val viewModel = remember { AuthViewModel() }
+    val authViewModel = remember { AuthViewModel() }
+    val ordersViewModel = remember { OrdersViewModel() }
 
     NavHost(navController = navController, startDestination = "products") {
         composable("products") {
             //HomeScreen(navController, products)
-            ProductListScreen(navController, products, viewModel)
+            ProductListScreen(navController, products, authViewModel)
         }
         composable("productDetail/{productId}") {backStackEntry ->
             val productId = backStackEntry.arguments?.getString("productId")?.toIntOrNull()
@@ -111,10 +98,17 @@ fun AppNavigation(products: List<Product>) {
             }
         }
         composable("login") {
-            LoginScreen(viewModel, navController)
+            LoginScreen(authViewModel, navController)
         }
         composable("profile") {
-            ProfileScreen(viewModel, navController)
+            ProfileScreen(authViewModel, navController)
+        }
+        composable("orders") {
+            OrderHistoryScreen(
+                ordersViewModel = ordersViewModel,
+                authViewModel = authViewModel,
+                navController = navController
+            )
         }
     }
 }

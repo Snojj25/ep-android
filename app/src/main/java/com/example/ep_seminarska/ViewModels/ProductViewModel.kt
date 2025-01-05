@@ -1,7 +1,9 @@
-package com.example.ep_seminarska
+package com.example.ep_seminarska.ViewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ep_seminarska.ApiService
+import com.example.ep_seminarska.Product
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

@@ -1,8 +1,10 @@
-package com.example.ep_seminarska
+package com.example.ep_seminarska.ViewModels
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ep_seminarska.AuthService
+import com.example.ep_seminarska.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -35,10 +37,8 @@ class AuthViewModel : ViewModel() {
         viewModelScope.launch {
             _authState.value = _authState.value.copy(isLoading = true, error = null)
             try {
-                Log.i("BEFORE REQ: ", "$email - $password")
                 val response = authService.authenticate("api", "authenticate", email, password)
-                Log.i("AFTER REQ: ", "$response")
-                if (response.status == "success" && response.data.authenticated) {
+                if (response.status == "success" && response.data.authenticated && response.data.user?.is_active == true) {
                     _authState.value = _authState.value.copy(
                         isLoading = false,
                         user = response.data.user,
